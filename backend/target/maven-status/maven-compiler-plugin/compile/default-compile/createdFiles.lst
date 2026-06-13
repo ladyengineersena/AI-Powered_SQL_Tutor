@@ -1,0 +1,7 @@
+com\sqltutor\backend\dto\SqlQueryResponse.class
+com\sqltutor\backend\dto\SqlQueryResponse$SqlQueryResponseBuilder.class
+com\sqltutor\backend\controller\TutorController.class
+com\sqltutor\backend\service\AiService.class
+com\sqltutor\backend\service\SqlExecutionService.class
+com\sqltutor\backend\dto\SqlQueryRequest.class
+com\sqltutor\backend\SqlTutorApplication.class
