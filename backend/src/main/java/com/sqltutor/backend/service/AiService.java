@@ -47,6 +47,15 @@ public class AiService {
                 .replace("Ç", "c");
     }
 
+    private int extractNumber(String query) {
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\\d+");
+        java.util.regex.Matcher matcher = pattern.matcher(query);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group());
+        }
+        return 1;
+    }
+
     public String generateSql(String nlQuery) {
         if (chatModel == null || "dummy-key-to-prevent-crash".equals(apiKey)) {
             String query = normalize(nlQuery);
@@ -117,15 +126,26 @@ public class AiService {
             }
             
             if (query.contains("en ucuz") || query.contains("dusuk fiyat") || query.contains("ucuz urun")) {
-                return "SELECT name, price, category FROM products ORDER BY price ASC LIMIT 1;";
+                int limit = extractNumber(query);
+                return "SELECT name, price, category FROM products ORDER BY price ASC LIMIT " + limit + ";";
             }
 
             if (query.contains("en pahali") || query.contains("yuksek fiyat") || query.contains("pahali urun")) {
-                return "SELECT name, price, category FROM products ORDER BY price DESC LIMIT 1;";
+                int limit = extractNumber(query);
+                return "SELECT name, price, category FROM products ORDER BY price DESC LIMIT " + limit + ";";
             }
 
             if (query.contains("toplam satis") || query.contains("toplami") || query.contains("toplam ciro")) {
-                 return "SELECT SUM(amount) as \"Toplam Ciro\" FROM sales;";
+                // Eğer zaman periyodu belirtilmişse, detaylı satış listesi getir
+                if (query.contains("30 gun") || query.contains("30 gunde") || query.contains("son ay") || query.contains("son gunde")) {
+                    return "SELECT s.id, u.name as \"Müşteri\", p.name as \"Ürün\", s.amount, s.sale_date FROM sales s JOIN users u ON s.user_id = u.id JOIN products p ON s.product_id = p.id ORDER BY s.sale_date DESC;";
+                }
+                return "SELECT SUM(amount) as \"Toplam Ciro\" FROM sales;";
+            }
+
+            // "Hangi kullanıcı hangi ürünü ne zaman aldı?" specific query
+            if (query.contains("hangi") && query.contains("kullanici") && query.contains("urun") && query.contains("ne zaman")) {
+                 return "SELECT u.name as \"Kullanıcı\", p.name as \"Ürün\", s.sale_date as \"Tarih\" FROM sales s JOIN users u ON s.user_id = u.id JOIN products p ON s.product_id = p.id ORDER BY s.sale_date DESC;";
             }
 
             if (query.contains("kullanici") || query.contains("uye") || query.contains("user") || query.contains("musteri")) {
