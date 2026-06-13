@@ -34,8 +34,8 @@ cd frontend
 npm run dev
 ```
 
-Uygulama `http://localhost:3000` adresinde çalışacaktır.
-  API servisi ise `http://localhost:8081` adresindedir.
+Uygulama `http://localhost:3011` adresinde çalışacaktır.
+  API servisi ise `http://localhost:9101` adresindedir.
 
 ### 5. API Anahtarı
 `backend/src/main/resources/application.properties` dosyasındaki `spring.ai.openai.api-key` kısmına OpenAI anahtarınızı ekleyin. Anahtar eklenene kadar uygulama örnek bir çıktı verecektir.
